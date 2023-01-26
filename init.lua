@@ -46,3 +46,18 @@ dracula.setup({
 --]]
 
 vim.cmd[[colorscheme dracula]]
+
+require('lspconfig')
+local lsp_installer = require("nvim-lsp-installer")
+
+-- The required servers
+local servers = {
+  "bashls",
+  "pyright",
+  "rust_analyzer",
+  "sumneko_lua",
+  "html",
+  "clangd",
+  "vimls",
+  "emmet_ls",
+}
