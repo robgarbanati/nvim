@@ -29,7 +29,7 @@ vim.o.termguicolors = true
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menu,menuone'
 
-vim.g.mapleader = "<Space>"
+vim.g.mapleader = " "
 
 vim.cmd [[
 set autoindent
@@ -59,8 +59,8 @@ vim.api.nvim_set_keymap('i', ';w', '<Esc>:w<Enter>', {noremap = true, expr = fal
 vim.api.nvim_set_keymap('n', ';w', '<Esc>:w<Enter>', {noremap = true, expr = false, silent = true })
 
 -- remember things yanked in a special register, so we can delete at will without concerns
-vim.api.nvim_set_keymap('n', '<Leader>p', '"0p', {noremap = true, expr = false, silent = true })
-vim.api.nvim_set_keymap('n', '<Leader>P', '"0P', {noremap = true, expr = false, silent = true })
+--vim.api.nvim_set_keymap('n', '<leader>p', '"0p', {noremap = true, expr = false, silent = true })
+--vim.api.nvim_set_keymap('n', '<leader>P', '"0P', {noremap = true, expr = false, silent = true })
 
 -- often I want to find the next _
 vim.api.nvim_set_keymap('o', 'W', 'f_', {noremap = true, expr = false, silent = true })
@@ -72,6 +72,10 @@ vim.api.nvim_set_keymap('v', 'E', 'lt_', {noremap = true, expr = false, silent =
 vim.api.nvim_set_keymap('o', 'B', 'T_', {noremap = true, expr = false, silent = true })
 vim.api.nvim_set_keymap('n', 'B', 'hT_', {noremap = true, expr = false, silent = true })
 vim.api.nvim_set_keymap('v', 'B', 'hT_', {noremap = true, expr = false, silent = true })
+
+-- In my mind, p means parentheses
+vim.api.nvim_set_keymap('o', 'p', 'i(', {noremap = true, expr = false, silent = true })
+
 
 -- Highlight on yank
 vim.cmd [[
@@ -278,3 +282,19 @@ cmp.setup({
     { name = 'buffer' },
   }
 })
+
+require('Comment').setup()
+
+-- Toggle folds!
+vim.api.nvim_set_keymap('n', '<leader>z', 'za', {noremap = true, expr = false, silent = true })
+vim.api.nvim_set_keymap('n', 'z<space>', 'za', {noremap = true, expr = false, silent = true })
+
+-- Copy to system clipboard with leader + y
+vim.api.nvim_set_keymap('v', '<leader>y', '"+y :let @*=@+<Enter>', {noremap = true, expr = false, silent = true })
+
+-- Clear the highlighting
+vim.api.nvim_set_keymap('n', '<Esc>', '<Esc>:noh<Enter>', {noremap = true, expr = false, silent = true })
+
+-- leader-leader for commenting
+vim.api.nvim_set_keymap('n', '<leader><leader>', 'gcc', {noremap = false, expr = false, silent = false })
+vim.api.nvim_set_keymap('v', '<leader><leader>', 'gc', {noremap = false, expr = false, silent = false })

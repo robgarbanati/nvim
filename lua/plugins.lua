@@ -56,4 +56,11 @@ return require('packer').startup(function(use)
   use 'onsails/lspkind-nvim'
   -- show various elements of LSP as UI
   use {'tami5/lspsaga.nvim', requires = {'neovim/nvim-lspconfig'}}
+
+  use {
+    'numToStr/Comment.nvim',
+    config = function()
+        require('Comment').setup()
+    end
+  }
 end)
