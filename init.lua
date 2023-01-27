@@ -1,3 +1,87 @@
+-- Do not show current vim mode since it is already shown by Lualine
+vim.o.showmode = false
+
+-- enable autowriteall
+vim.o.autowriteall = true
+
+-- Show the line numbers
+vim.wo.number = true
+
+-- Show chars at the end of line
+vim.opt.list = true
+
+-- Enable break indent
+vim.o.breakindent = true
+
+--Case insensitive searching UNLESS /C or capital in search
+vim.o.ignorecase = true
+vim.o.smartcase = true
+
+-- Decrease update time
+vim.o.updatetime = 250
+
+-- Shows signs by Autocompletion plugin
+vim.wo.signcolumn = 'yes'
+
+-- Enable termguicolors. Very essential if you want 24-bit RGB color in TUI.
+vim.o.termguicolors = true
+
+-- Set completeopt to have a better completion experience
+vim.o.completeopt = 'menu,menuone'
+
+vim.g.mapleader = "<Space>"
+
+vim.cmd [[
+set autoindent
+set expandtab
+set shiftwidth=4
+set smartindent
+set softtabstop=4
+set tabstop=4
+set foldmethod=syntax   " set a foldmethod
+set splitright          " all vertical splits open to the right
+set textwidth=100
+]]
+
+-- easy window navigation
+vim.api.nvim_set_keymap('n', '<C-j>', '<C-w>j', {noremap = true, expr = false, silent = true })
+vim.api.nvim_set_keymap('n', '<C-k>', '<C-w>k', {noremap = true, expr = false, silent = true })
+vim.api.nvim_set_keymap('n', '<C-h>', '<C-w>h', {noremap = true, expr = false, silent = true })
+vim.api.nvim_set_keymap('n', '<C-l>', '<C-w>l', {noremap = true, expr = false, silent = true })
+
+--Remap for dealing with word wrap
+vim.api.nvim_set_keymap('n', 'k', "v:count == 0 ? 'gk' : 'k'", { noremap = true, expr = true, silent = true })
+vim.api.nvim_set_keymap('n', 'j', "v:count == 0 ? 'gj' : 'j'", { noremap = true, expr = true, silent = true })
+
+-- Remap ;w to escape in insert mode.
+vim.api.nvim_set_keymap('i', ';;', ';<Esc>:w<Enter>', {noremap = true, expr = false, silent = true })
+vim.api.nvim_set_keymap('i', ';w', '<Esc>:w<Enter>', {noremap = true, expr = false, silent = true })
+vim.api.nvim_set_keymap('n', ';w', '<Esc>:w<Enter>', {noremap = true, expr = false, silent = true })
+
+-- remember things yanked in a special register, so we can delete at will without concerns
+vim.api.nvim_set_keymap('n', '<Leader>p', '"0p', {noremap = true, expr = false, silent = true })
+vim.api.nvim_set_keymap('n', '<Leader>P', '"0P', {noremap = true, expr = false, silent = true })
+
+-- often I want to find the next _
+vim.api.nvim_set_keymap('o', 'W', 'f_', {noremap = true, expr = false, silent = true })
+vim.api.nvim_set_keymap('n', 'W', 'f_l', {noremap = true, expr = false, silent = true })
+vim.api.nvim_set_keymap('v', 'W', 'f_l', {noremap = true, expr = false, silent = true })
+vim.api.nvim_set_keymap('o', 'E', 't_', {noremap = true, expr = false, silent = true })
+vim.api.nvim_set_keymap('n', 'E', 'lt_', {noremap = true, expr = false, silent = true })
+vim.api.nvim_set_keymap('v', 'E', 'lt_', {noremap = true, expr = false, silent = true })
+vim.api.nvim_set_keymap('o', 'B', 'T_', {noremap = true, expr = false, silent = true })
+vim.api.nvim_set_keymap('n', 'B', 'hT_', {noremap = true, expr = false, silent = true })
+vim.api.nvim_set_keymap('v', 'B', 'hT_', {noremap = true, expr = false, silent = true })
+
+-- Highlight on yank
+vim.cmd [[
+augroup YankHighlight
+autocmd!
+autocmd TextYankPost * silent! lua vim.highlight.on_yank()
+augroup end
+]]
+
+
 require('plugins')
 --vim.cmd[[colorscheme dracula]]
 require("onedark").setup({

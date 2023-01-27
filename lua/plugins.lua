@@ -4,6 +4,22 @@ return require('packer').startup(function(use)
   -- Packer can manage itself
   use 'wbthomason/packer.nvim'
 
+  -- bracket autocompletion
+  use 'vim-scripts/auto-pairs-gentle'
+
+  -- Fancier statusline
+  use {
+    'nvim-lualine/lualine.nvim',
+    requires = {
+      'kyazdani42/nvim-web-devicons',
+      'arkav/lualine-lsp-progress',
+    },
+  }
+
+  -- Fast incremental parsing library
+  use 'nvim-treesitter/nvim-treesitter'
+
+  -- colorschemes
   use {'Mofiqul/dracula.nvim', as = 'dracula'}
   use 'navarasu/onedark.nvim'
 
