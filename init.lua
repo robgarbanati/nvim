@@ -29,6 +29,9 @@ vim.o.termguicolors = true
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menu,menuone'
 
+-- Keep 8 lines above/below cursor visible
+vim.o.scrolloff = 8
+
 vim.g.mapleader = " "
 
 vim.cmd [[
@@ -41,7 +44,15 @@ set tabstop=4
 set foldmethod=syntax   " set a foldmethod
 set splitright          " all vertical splits open to the right
 set textwidth=100
+set foldnestmax=1
+set foldlevel=1
+source ~/.config/nvim/cscope/cscope_maps.vim
+set csre
 ]]
+
+-- would go in above block
+-- source ~/.config/nvim/cscope/cscope_maps.vim
+-- set csre
 
 -- easy window navigation
 vim.api.nvim_set_keymap('n', '<C-j>', '<C-w>j', {noremap = true, expr = false, silent = true })
@@ -59,8 +70,8 @@ vim.api.nvim_set_keymap('i', ';w', '<Esc>:w<Enter>', {noremap = true, expr = fal
 vim.api.nvim_set_keymap('n', ';w', '<Esc>:w<Enter>', {noremap = true, expr = false, silent = true })
 
 -- remember things yanked in a special register, so we can delete at will without concerns
---vim.api.nvim_set_keymap('n', '<leader>p', '"0p', {noremap = true, expr = false, silent = true })
---vim.api.nvim_set_keymap('n', '<leader>P', '"0P', {noremap = true, expr = false, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>p', '"0p', {noremap = true, expr = false, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>P', '"0P', {noremap = true, expr = false, silent = true })
 
 -- often I want to find the next _
 vim.api.nvim_set_keymap('o', 'W', 'f_', {noremap = true, expr = false, silent = true })
@@ -72,6 +83,10 @@ vim.api.nvim_set_keymap('v', 'E', 'lt_', {noremap = true, expr = false, silent =
 vim.api.nvim_set_keymap('o', 'B', 'T_', {noremap = true, expr = false, silent = true })
 vim.api.nvim_set_keymap('n', 'B', 'hT_', {noremap = true, expr = false, silent = true })
 vim.api.nvim_set_keymap('v', 'B', 'hT_', {noremap = true, expr = false, silent = true })
+
+-- In my mind, p means parentheses
+vim.api.nvim_set_keymap('n', 'n', 'nzz', {noremap = true, expr = false, silent = true })
+vim.api.nvim_set_keymap('n', 'N', 'Nzz', {noremap = true, expr = false, silent = true })
 
 -- In my mind, p means parentheses
 vim.api.nvim_set_keymap('o', 'p', 'i(', {noremap = true, expr = false, silent = true })
@@ -103,7 +118,7 @@ local servers = {
   "rust_analyzer",
   "sumneko_lua",
   "html",
-  "clangd",
+  -- "clangd",
   "vimls",
   "emmet_ls",
 }
@@ -136,35 +151,38 @@ local on_attach = function(_, bufnr)
   buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
 
   -- Format buffer
-  buf_set_keymap('n', '<F3>', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+  -- buf_set_keymap('n', '<F3>', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+  buf_set_keymap('n', '<F3>', '<cmd>lua vim.lsp.buf.format({async=true})<CR>', opts)
 
   -- Jump LSP diagnostics
-  -- NOTE: Currently, there is a bug in lspsaga.diagnostic module. Thus we use
-  --       Vim commands to move through diagnostics.
-  buf_set_keymap('n', '[g', ':Lspsaga diagnostic_jump_prev<CR>', opts)
-  buf_set_keymap('n', ']g', ':Lspsaga diagnostic_jump_next<CR>', opts)
+ -- NOTE: Currently, there is a bug in lspsaga.diagnostic module. Thus we use
+ --       Vim commands to move through diagnostics.
+ buf_set_keymap('n', '[g', ':Lspsaga diagnostic_jump_prev<CR>', opts)
+ buf_set_keymap('n', ']g', ':Lspsaga diagnostic_jump_next<CR>', opts)
 
-  -- Rename symbol
-  buf_set_keymap('n', '<leader>rn', "<cmd>lua require('lspsaga.rename').rename()<CR>", opts)
+ -- Rename symbol
+ buf_set_keymap('n', '<leader>rn', "<cmd>lua require('lspsaga.rename').rename()<CR>", opts)
 
-  -- Find references
-  buf_set_keymap('n', 'gr', '<cmd>lua require("lspsaga.provider").lsp_finder()<CR>', opts)
+ -- Find references
+ buf_set_keymap('n', 'gr', '<cmd>lua require("lspsaga.provider").lsp_finder()<CR>', opts)
 
-  -- Doc popup scrolling
-  buf_set_keymap('n', 'K', "<cmd>lua require('lspsaga.hover').render_hover_doc()<CR>", opts)
-  buf_set_keymap('n', '<C-f>', "<cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<CR>", opts)
-  buf_set_keymap('n', '<C-b>', "<cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>", opts)
+ -- Doc popup scrolling
+ buf_set_keymap('n', 'K', "<cmd>lua require('lspsaga.hover').render_hover_doc()<CR>", opts)
+ buf_set_keymap('n', '<C-f>', "<cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<CR>", opts)
+ buf_set_keymap('n', '<C-b>', "<cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>", opts)
 
-  -- codeaction
-  buf_set_keymap('n', '<leader>ac', "<cmd>lua require('lspsaga.codeaction').code_action()<CR>", opts)
-  buf_set_keymap('v', '<leader>a', ":<C-U>lua require('lspsaga.codeaction').range_code_action()<CR>", opts)
+ -- codeaction
+ buf_set_keymap('n', '<leader>ac', "<cmd>lua require('lspsaga.codeaction').code_action()<CR>", opts)
+ buf_set_keymap('v', '<leader>a', ":<C-U>lua require('lspsaga.codeaction').range_code_action()<CR>", opts)
 
-  -- Floating terminal
-  -- NOTE: Use `vim.cmd` since `buf_set_keymap` is not working with `tnoremap...`
-  vim.cmd [[
-  nnoremap <silent> <A-d> <cmd>lua require('lspsaga.floaterm').open_float_terminal()<CR>
-  tnoremap <silent> <A-d> <C-\><C-n>:lua require('lspsaga.floaterm').close_float_terminal()<CR>
-  ]]
+ buf_set_keymap('n', '<leader>fc', "<cmd>lua require'telescope.builtin'.live_grep{ vimgrep_arguments = { 'rg', '--with-filename', '--line-number', '--column', '--smart-case', '-tc' } }<CR>", {noremap=true, silent=true})
+
+ -- Floating terminal
+ -- NOTE: Use `vim.cmd` since `buf_set_keymap` is not working with `tnoremap...`
+ vim.cmd [[
+ nnoremap <silent> <A-d> <cmd>lua require('lspsaga.floaterm').open_float_terminal()<CR>
+ tnoremap <silent> <A-d> <C-\><C-n>:lua require('lspsaga.floaterm').close_float_terminal()<CR>
+ ]]
 end
 
 
@@ -184,6 +202,13 @@ local server_specific_opts = {
   html = function(opts)
     opts.filetypes = {"html", "htmldjango"}
   end,
+  clangd = function(opts)
+      opts.filetypes = {"c", "cpp"}
+      opts.cmd = {  "clangd",
+                    "--background-index",
+                    "--compile-commands-dir=/home/rob/amp/amp_platform"
+      }
+  end
 }
 
 
@@ -229,20 +254,20 @@ cmp.setup({
       vim.fn["vsnip#anonymous"](args.body)
     end,
   },
-   formatting = {
-    format = lspkind.cmp_format({
-      mode = true,
-      preset = 'codicons',
-      symbol_map = cmp_kinds, -- The glyphs will be used by `lspkind`
-      menu = ({
-        buffer = "[Buffer]",
-        nvim_lsp = "[LSP]",
-        luasnip = "[LuaSnip]",
-        nvim_lua = "[Lua]",
-        latex_symbols = "[Latex]",
-      }),
-    }),
-  },
+  formatting = {
+   format = lspkind.cmp_format({
+     mode = true,
+     preset = 'codicons',
+     symbol_map = cmp_kinds, -- The glyphs will be used by `lspkind`
+     menu = ({
+       buffer = "[Buffer]",
+       nvim_lsp = "[LSP]",
+       luasnip = "[LuaSnip]",
+       nvim_lua = "[Lua]",
+       latex_symbols = "[Latex]",
+     }),
+   }),
+ },
   mapping = {
     ['<C-p>'] = cmp.mapping.select_prev_item(),
     ['<C-n>'] = cmp.mapping.select_next_item(),
@@ -298,3 +323,17 @@ vim.api.nvim_set_keymap('n', '<Esc>', '<Esc>:noh<Enter>', {noremap = true, expr 
 -- leader-leader for commenting
 vim.api.nvim_set_keymap('n', '<leader><leader>', 'gcc', {noremap = false, expr = false, silent = false })
 vim.api.nvim_set_keymap('v', '<leader><leader>', 'gc', {noremap = false, expr = false, silent = false })
+
+vim.api.nvim_set_keymap('n', 'q:', '<nop>', {noremap = true, expr = false, silent = true })
+vim.api.nvim_set_keymap('n', 'Q', '<nop>', {noremap = true, expr = false, silent = true })
+
+-- Telescope keymaps
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
+-- vim.keymap.set('n', '<leader>fg', builtin.live_grep, {'-tc'})
+vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
+-- vim.api.nvim_buf_set_keymap('n', '<leader>fc', "lua require'telescope.builtin'.live_grep{ vimgrep_arguments = { 'rg', '--with-filename', '--line-number', '--column', '--smart-case', '-tc' } }", {noremap=true, silent=true})
+vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
+vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+
+
