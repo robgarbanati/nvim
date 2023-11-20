@@ -41,18 +41,22 @@ set shiftwidth=4
 set smartindent
 set softtabstop=4
 set tabstop=4
-set foldmethod=syntax   " set a foldmethod
-set splitright          " all vertical splits open to the right
-set textwidth=100
+set foldmethod=indent   " set a foldmethod
+" set splitright          " all vertical splits open to the right
+" set textwidth=100
 set foldnestmax=1
 set foldlevel=1
 source ~/.config/nvim/cscope/cscope_maps.vim
 set csre
+nnoremap <F1> <Esc>
 ]]
 
 -- would go in above block
 -- source ~/.config/nvim/cscope/cscope_maps.vim
 -- set csre
+
+vim.api.nvim_set_keymap('n', '<F1>', '<Esc>', {noremap = true, expr = false, silent = true })
+vim.api.nvim_set_keymap('i', '<F1>', '<Esc>', {noremap = true, expr = false, silent = true })
 
 -- easy window navigation
 vim.api.nvim_set_keymap('n', '<C-j>', '<C-w>j', {noremap = true, expr = false, silent = true })
@@ -118,7 +122,7 @@ local servers = {
   "rust_analyzer",
   "sumneko_lua",
   "html",
-  -- "clangd",
+  "clangd",
   "vimls",
   "emmet_ls",
 }
@@ -149,6 +153,7 @@ local on_attach = function(_, bufnr)
   -- ======================= The Keymaps =========================
   -- jump to definition
   buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_set_keymap('n', '<Leader>d', '<cmd>vertical split<CR><cmd>lua vim.lsp.buf.definition()<CR>', opts)
 
   -- Format buffer
   -- buf_set_keymap('n', '<F3>', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
@@ -206,7 +211,7 @@ local server_specific_opts = {
       opts.filetypes = {"c", "cpp"}
       opts.cmd = {  "clangd",
                     "--background-index",
-                    "--compile-commands-dir=/home/rob/amp/amp_platform"
+                    "--compile-commands-dir=/home/rob/amp/amp_platform/compile_commands"
       }
   end
 }
@@ -336,4 +341,38 @@ vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
 vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
 
+if vim.o.diff then
+    vim.api.nvim_set_keymap('n', '<leader>1', ':diffget LOCAL<CR>', { noremap = true })
+    vim.api.nvim_set_keymap('n', '<leader>2', ':diffget BASE<CR>', { noremap = true })
+    vim.api.nvim_set_keymap('n', '<leader>3', ':diffget REMOTE<CR>', { noremap = true })
+end
 
+print("hello from init.lua")
+-- local leap = require('leap')
+
+-- vim.keymap.set({"n", "x", "o"}, "f", "<Plug>(leap-forward-to)")
+-- vim.keymap.set({"n", "x", "o"}, "F", "<Plug>(leap-backward-to)")
+-- vim.keymap.set({"n", "x", "o"}, "t", "<Plug>(leap-forward-till)")
+-- vim.keymap.set({"n", "x", "o"}, "T", "<Plug>(leap-backward-till)")
+-- vim.keymap.set({"n", "x", "o"}, ";f", "<Plug>(leap-from-window)")
+
+vim.keymap.set({"n", "x", "o"}, "<leader>f", "<Plug>(leap-forward-to)")
+vim.keymap.set({"n", "x", "o"}, "<leader>F", "<Plug>(leap-backward-to)")
+vim.keymap.set({"n", "x", "o"}, "<leader>t", "<Plug>(leap-forward-till)")
+vim.keymap.set({"n", "x", "o"}, "<leader>T", "<Plug>(leap-backward-till)")
+vim.keymap.set({"n", "x", "o"}, ";f", "<Plug>(leap-from-window)")
+
+local mark = require("harpoon.mark")
+local ui = require("harpoon.ui")
+
+vim.keymap.set("n", "<leader>a", mark.add_file)
+vim.keymap.set("n", "<leader>e", ui.toggle_quick_menu)
+
+vim.keymap.set("n", "<leader>1", function() ui.nav_file(1) end)
+vim.keymap.set("n", "<leader>2", function() ui.nav_file(2) end)
+vim.keymap.set("n", "<leader>3", function() ui.nav_file(3) end)
+vim.keymap.set("n", "<leader>4", function() ui.nav_file(4) end)
+
+-- enable copilot suggestion for every buffer
+vim.cmd [[autocmd BufEnter * silent Copilot suggestion]]
+-- vim.cmd [[autocmd BufEnter * lua require'copilot'.start()]]

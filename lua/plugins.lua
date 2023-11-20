@@ -71,6 +71,9 @@ return require('packer').startup(function(use)
   }
 
   use 'tpope/vim-fugitive'
+  use 'theprimeagen/harpoon'
+  -- use ({ "ggandor/leap.nvim", config = function() require("leap").add_default_mappings() end })
+  use 'ggandor/leap.nvim'
 
   use {
       "zbirenbaum/copilot.lua",
@@ -98,9 +101,9 @@ return require('packer').startup(function(use)
             auto_trigger = false,
             debounce = 75,
             keymap = {
-              accept = "<C-Tab>",
-              accept_word = false,
-              accept_line = false,
+              accept = "<C-k>",
+              accept_word = "<C-Tab>",
+              accept_line = "<C-S-Tab>",
               next = "<C-l>",
               prev = "<C-h>",
               dismiss = "<C-j>",
